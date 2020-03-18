@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Laborator 3</string>
+
+    <string-array name="ProductName">
+        <item>Product_1</item>
+        <item>Product_2</item>
+        <item>Product_3</item>
+        <item>Product_4</item>
+        <item>Product_5</item>
+        <item>Product_6</item>
+        <item>Product_7</item>
+        <item>Product_8</item>
+    </string-array>
+</resources>
