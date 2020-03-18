@@ -11,4 +11,12 @@
         <item>Product_7</item>
         <item>Product_8</item>
     </string-array>
+
+    <string name="item1">Edit</string>
+    <string name="item2">Informations</string>
+    <string name="item3">More</string>
+    <string name="subitem1">Rate App</string>
+    <string name="subitem2">Exit App</string>
+
+    <string name="ratebutton">Rate</string>
 </resources>
