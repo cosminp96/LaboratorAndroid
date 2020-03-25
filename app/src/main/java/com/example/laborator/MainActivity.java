@@ -7,8 +7,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -20,11 +24,26 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.example.laborator.MESSAGE";
     private ListView mainListView;
     Toolbar toolbar;
+    boolean performSync;
+    String syncInterval;
+    String fullName;
+    String email;
+    String mainTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +55,17 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         mainListView = findViewById(R.id.mainListView);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        this.performSync = prefs.getBoolean("perform_sync", true);
+        this.syncInterval = prefs.getString("sync_interval", "30");
+        this.fullName = prefs.getString("full_name", "");
+        this.email = prefs.getString("email_address", "");
+        this.mainTitle = prefs.getString("main_title", "");
+
+
+        toolbar.setTitle(mainTitle);
+
         ArrayAdapter<String> mAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1,
                 getResources().getStringArray(R.array.ProductName));
 
@@ -45,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TEXT, mainListView.getItemAtPosition(position).toString());
-                startActivity(Intent.createChooser(intent,"Choose app:"));
+                startActivity(Intent.createChooser(intent, "Choose app:"));
             }
         });
         mainListView.setAdapter(mAdapter);
@@ -87,6 +117,20 @@ public class MainActivity extends AppCompatActivity {
         Log.i("first6", "onDestroy");
     }
 
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        switch (requestCode) {
+//            case 1000:
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Toast.makeText(this, "@string/permissionYes", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(this, "@string/permissionNo", Toast.LENGTH_SHORT).show();
+//                    finish();
+//                }
+//                break;
+//        }
+//    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -96,36 +140,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.itemSave: {
+                //save preferences as string
+                String preferences = settingsToText();
+                //save preferences
+                save("settingsFile.txt", preferences);
+                return true;
+            }
             case R.id.item1: {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Do you want to change the title?");
-
-                final EditText newTitle = new EditText(MainActivity.this);
-                newTitle.setInputType(InputType.TYPE_CLASS_TEXT);
-                builder.setView(newTitle);
-
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        toolbar = findViewById(R.id.toolbar);
-                        toolbar.setTitle(newTitle.getText().toString());
-                        Toast.makeText(MainActivity.this, "Title changed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
+                //actual preferences
+                startActivity(new Intent(this, Settings.class));
                 return true;
             }
             case R.id.item2: {
-                //settings
+                //information
                 AlertDialog.Builder info = new AlertDialog.Builder(MainActivity.this);
                 String message = "This app was created by Cosmin Popescu and it is intended to be a school laboratory assignment.";
-                info.setTitle("Informations");
+                info.setTitle("Information");
                 info.setMessage(message);
                 info.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
@@ -140,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 //more
                 return true;
             }
-            case R.id.subitem1:{
+            case R.id.subitem1: {
 //                Toast.makeText(this, "Rate app option selected", Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Do you enjoy our app?");
@@ -151,12 +182,12 @@ public class MainActivity extends AppCompatActivity {
                         buttonYes.setTitle("Rate yes");
                         buttonYes.setMessage("Thank you for your feedback!");
                         buttonYes.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(MainActivity.this, "Thank you", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                buttonYes.show();
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(MainActivity.this, "Thank you", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        buttonYes.show();
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -196,5 +227,70 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    public void save(String fileName, String text) {
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(fileName, MODE_PRIVATE);
+            fos.write(text.getBytes());
+            Toast.makeText(this,"Saved to " + getFilesDir() + "/" + fileName,Toast.LENGTH_SHORT).show();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null){
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public String load(View v, String fileName) {
+        FileInputStream fis = null;
+        String content = "";
+        try {
+            fis = openFileInput(fileName);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String text;
+
+            while ((text = br.readLine()) != null) {
+                sb.append(text).append("\n");
+            }
+
+            content = sb.toString();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return content;
+    }
+
+    public String settingsToText()
+    {
+        String result = "";
+
+        result += this.performSync + "\n";
+        result += this.syncInterval + "\n";
+        result += this.fullName + "\n";
+        result += this.email + "\n";
+        result += this.mainTitle + "\n";
+
+        return result;
     }
 }

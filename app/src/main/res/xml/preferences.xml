@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Sync Settings">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="perform_sync"
+            android:summary="Enable/Disable data synchronization"
+            android:title="Enable Auto Sync" />
+        <ListPreference
+            android:defaultValue="30"
+            android:entries="@array/updateInterval"
+            android:entryValues="@array/updateIntervalValues"
+            android:key="sync_interval"
+            android:title="Sync Interval"
+            android:dependency="perform_sync"
+            android:summary="Define how often synchronization will be performed."/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Personal Information">
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="full_name"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Your full name"
+            android:dialogTitle="Enter your full name"
+            android:dialogMessage="Enter full name"
+            android:inputType="textCapWords"
+            android:summary="Enter your full name to be used in the app"/>
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="email_address"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Email address"
+            android:dialogTitle="Email Address"
+            android:dialogMessage="Enter your email address"
+            android:inputType="textEmailAddress"
+            android:summary="Enter your email address to be used in the app"/>
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="main_title"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Application Title"
+            android:dialogTitle="Application Title"
+            android:dialogMessage="Enter new title for application"
+            android:inputType="textCapWords"
+            android:summary="Enter a new title for the main page of the app"/>
+    </PreferenceCategory>
+</PreferenceScreen>

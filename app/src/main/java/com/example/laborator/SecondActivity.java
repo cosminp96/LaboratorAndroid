@@ -58,37 +58,6 @@ public class SecondActivity extends AppCompatActivity {
                 builder.show();
             }
         });
-
-
-
-        /// the below is doing the same thing as the above 3 lines but a lot more uglier
-//        if (bundle != null) {
-//            mToolbar.setTitle(bundle.getString("ProductName"));
-//            if (mToolbar.getTitle().toString().equalsIgnoreCase("Product_1")) {
-//                textView.setText(bundle.getString(Intent.EXTRA_TEXT));
-//            }
-//            if (mToolbar.getTitle().toString().equalsIgnoreCase("Product_2")) {
-//                textView.setText(bundle.getString(Intent.EXTRA_TEXT));
-//            }
-//            if (mToolbar.getTitle().toString().equalsIgnoreCase("Product_3")) {
-//                textView.setText(bundle.getString(Intent.EXTRA_TEXT));
-//            }
-//            if (mToolbar.getTitle().toString().equalsIgnoreCase("Product_4")) {
-//                textView.setText(bundle.getString(Intent.EXTRA_TEXT));
-//            }
-//            if (mToolbar.getTitle().toString().equalsIgnoreCase("Product_5")) {
-//                textView.setText(bundle.getString(Intent.EXTRA_TEXT));
-//            }
-//            if (mToolbar.getTitle().toString().equalsIgnoreCase("Product_6")) {
-//                textView.setText(bundle.getString(Intent.EXTRA_TEXT));
-//            }
-//            if (mToolbar.getTitle().toString().equalsIgnoreCase("Product_7")) {
-//                textView.setText(bundle.getString(Intent.EXTRA_TEXT));
-//            }
-//            if (mToolbar.getTitle().toString().equalsIgnoreCase("Product_8")) {
-//                textView.setText(bundle.getString(Intent.EXTRA_TEXT));
-//            }
-//        }
     }
 
     @Override
