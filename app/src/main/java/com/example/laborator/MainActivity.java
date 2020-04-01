@@ -4,14 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
+import android.os.Process;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
@@ -33,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,11 +57,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 123);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
         setSupportActionBar(toolbar);
         mainListView = findViewById(R.id.mainListView);
+
+
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
@@ -167,6 +177,31 @@ public class MainActivity extends AppCompatActivity {
                 info.show();
                 return true;
             }
+            case R.id.itemSensors:{
+                startActivity(new Intent(this, SensorsActivity.class));
+                return true;
+            }
+            case R.id.itemLocation:{
+                //current location coordinates
+                GPStracker gpstracker = new GPStracker(getApplicationContext());
+                Location l = gpstracker.getLocation();
+                if(l != null){
+                    double latitude = l.getLatitude();
+                    double longitude = l.getLongitude();
+                    AlertDialog.Builder currentLocation = new AlertDialog.Builder(MainActivity.this);
+                    String message = "Latitude: " + latitude + "\n" + "Longitude: " + longitude + "\n";
+                    currentLocation.setTitle("Current Location");
+                    currentLocation.setMessage(message);
+                    currentLocation.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    currentLocation.show();
+                }
+                return true;
+            }
             case R.id.item3: {
                 //more
                 return true;
@@ -209,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             case R.id.subitem2: {
-                android.os.Process.killProcess(android.os.Process.myPid());
+                Process.killProcess(Process.myPid());
                 System.exit(1);
                 return true;
             }
@@ -250,8 +285,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String load(View v, String fileName) {
+    public List<String> load(String fileName) {
         FileInputStream fis = null;
+        List<String> settings = null;
         String content = "";
         try {
             fis = openFileInput(fileName);
@@ -262,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
             while ((text = br.readLine()) != null) {
                 sb.append(text).append("\n");
+                settings.add(text);
             }
 
             content = sb.toString();
@@ -278,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        return content;
+        return settings;
     }
 
     public String settingsToText()

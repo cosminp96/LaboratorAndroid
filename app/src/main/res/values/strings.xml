@@ -18,13 +18,16 @@
     <string name="subitem1">Rate App</string>
     <string name="subitem2">Exit App</string>
     <string name="itemSave">Save Preferences</string>
+    <string name="itemSensors">Show Sensors</string>
+    <string name="itemLocation">Show Current Location</string>
 
-    <string name="ratebutton">Rate</string>
+    <string name="sensorsTitle">Sensors</string>
+    <string name="accelerometerTitle">Accelerometer</string>
+    <string name="gyroscopeTitle">Gyroscope</string>
+    <string name="acceNotSupported">Accelerometer not supported!</string>
+    <string name="gyroNotSupported">Gyroscope not supported!</string>
+    <string name="magneNotSupported">Magnetic Field sensor not supported!</string>
+    <string name="notImplementedMessage">This feature was not yet implemented. We will try our best to do it.</string>
 
-    <string name="settingsFile">savedSettings.txt</string>
-
-    <string name="permissionYes">Permission granted!</string>
-    <string name="permissionNo">Permission not granted!</string>
-
-    <string name="txtExtension">.txt</string>
+    <string name="rateButton">Rate</string>
 </resources>

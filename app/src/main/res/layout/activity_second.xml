@@ -36,7 +36,7 @@
         android:layout_marginStart="172dp"
         android:layout_marginLeft="172dp"
         android:layout_marginTop="544dp"
-        android:text="@string/ratebutton"
+        android:text="@string/rateButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

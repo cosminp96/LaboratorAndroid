@@ -15,8 +15,18 @@
     <item
         android:id="@+id/item2"
         android:title="@string/item2"
-        app:showAsAction="never">
-    </item>
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/itemSensors"
+        android:title="@string/itemSensors"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/itemLocation"
+        android:title="@string/itemLocation"
+        app:showAsAction="never"/>
+
     <item
         android:id="@+id/item3"
         android:title="@string/item3"
