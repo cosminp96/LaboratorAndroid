@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -95,21 +96,22 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        try {
-            if(camera != null)
-                camera.release();
-            camera = Camera.open();
-        } catch(Exception e) {
-            e.printStackTrace();
+        Camera.Parameters params = camera.getParameters();
+
+        if(this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE){
+            params.set("orientation", "portrait");
+            camera.setDisplayOrientation(90);
+            params.setRotation(90);
+        } else {
+            params.set("orientation", "landscape");
+            camera.setDisplayOrientation(0);
+            params.setRotation(0);
         }
-        Camera.Parameters params;
-        params = camera.getParameters();
-        params.setPreviewFrameRate(20);
-        params.setPreviewSize(352,288);
+
         camera.setParameters(params);
-        camera.setDisplayOrientation(90);
+
         try {
-            camera.setPreviewDisplay(surfaceHolder);
+            camera.setPreviewDisplay(holder);
             camera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();
@@ -119,9 +121,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Camera.Parameters params = camera.getParameters();
-        params.setPreviewSize(352,288);
         camera.setParameters(params);
-
         camera.startPreview();
     }
 

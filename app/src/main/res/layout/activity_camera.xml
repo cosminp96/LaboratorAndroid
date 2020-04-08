@@ -22,7 +22,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
         android:layout_marginBottom="81dp"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:id="@+id/btnCapture"
