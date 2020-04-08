@@ -20,6 +20,7 @@
     <string name="itemSave">Save Preferences</string>
     <string name="itemSensors">Show Sensors</string>
     <string name="itemLocation">Show Current Location</string>
+    <string name="itemCamera">Open Camera Module</string>
 
     <string name="sensorsTitle">Sensors</string>
     <string name="accelerometerTitle">Accelerometer</string>
@@ -29,5 +30,8 @@
     <string name="magneNotSupported">Magnetic Field sensor not supported!</string>
     <string name="notImplementedMessage">This feature was not yet implemented. We will try our best to do it.</string>
 
+    <string name="cameraTitle">Camera Module</string>
+
+    <string name="btnCapturePicture">Capture</string>
     <string name="rateButton">Rate</string>
 </resources>
