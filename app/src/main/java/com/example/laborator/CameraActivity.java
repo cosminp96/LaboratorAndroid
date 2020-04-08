@@ -40,6 +40,16 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this,"Permission not granted READ", Toast.LENGTH_SHORT).show();
+        }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this,"Permission not granted WRITE", Toast.LENGTH_SHORT).show();
+        }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this,"Permission not granted CAMERA", Toast.LENGTH_SHORT).show();
+        }
+
         toolbar = findViewById(R.id.cameraToolbar);
         toolbar.setTitle(R.string.cameraTitle);
 
@@ -67,24 +77,27 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
                 Bitmap cbmp = Bitmap.createBitmap(bmp,0,0,bmp.getWidth(),bmp.getHeight(),null,true);
                 String pathFileName = currentDateFormat();
-                storePhotoToStorage(cbmp,pathFileName);
-
-                Toast.makeText(getApplicationContext(),"Picture saved.", Toast.LENGTH_SHORT).show();
-
-                CameraActivity.this.camera.startPreview();
+                if(storePhotoToStorage(cbmp,pathFileName)) {
+                    Toast.makeText(getApplicationContext(),"Picture saved.", Toast.LENGTH_SHORT).show();
+                    CameraActivity.this.camera.startPreview();
+                } else {
+                    Toast.makeText(getApplicationContext(),"Error.", Toast.LENGTH_SHORT).show();
+                    CameraActivity.this.camera.startPreview();
+                }
             }
         };
     }
 
-    private void storePhotoToStorage(Bitmap cbmp, String pathFileName) {
-        File outputFile = new File(Environment.getExternalStorageDirectory(),"/DCIM/"+"photo_"+pathFileName+".jpg");
+    private boolean storePhotoToStorage(Bitmap cbmp, String pathFileName) {
         try {
-            FileOutputStream fos = new FileOutputStream(outputFile);
+            FileOutputStream fos = openFileOutput(pathFileName+".jpg", MODE_PRIVATE);
             cbmp.compress(Bitmap.CompressFormat.JPEG,100,fos);
             fos.flush();
             fos.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
